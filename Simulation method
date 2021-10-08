@@ -1,0 +1,21 @@
+from numpy.random import default_rng
+def simulateNewCases2(m,threshold,a=2,d=5,n1=4,n2=1,p=0.2):
+    rng=default_rng()
+    newlyInfected=[1]
+    reportList=[]
+    n=n1
+    for day in range(1,m+1):
+        if day<a:
+            contagious=0
+        elif day<d:
+            contagious=sum(newlyInfected[0:day-a+1])
+        else:
+            contagious=sum(newlyInfected[day-d:day-a+1])
+        newlyInfected.append(rng.binomial(contagious*n,p))
+        if day<d:
+            reportList.append(0)
+        else:
+            reportList.append(newlyInfected[day-d])
+        if sum(reportList)>=threshold:
+            n=n2
+    return reportList

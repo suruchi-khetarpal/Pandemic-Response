@@ -1,0 +1,48 @@
+# Code to plot one possible disease trajectory. Re-run to see a different trajectory.
+import pandas as pd
+import matplotlib.pyplot as plt
+m=60
+s=pd.Series(simulateNewCases(m),index=range(1,m+1))
+s.plot(logy=True,title='Possible Disease Trajectory')
+plt.xlabel('Day')
+plt.ylabel('Number of reported cases per day')
+plt.show()
+
+
+# Impact of the incubation period on the number of cases in the first 60 days
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+numCases=pd.Series()
+for d in range(2,13,2):
+    meanPrediction=np.mean([sum(simulateNewCases(60,d=d)) for i in range(1000)])
+    numCases.loc[d]=meanPrediction
+numCases.plot(style='o-',title='Impact of the Incubation Period')
+plt.xlabel('Days of Incubation')
+plt.ylabel('Total # of Reported Cases in 60 Days')
+plt.show()
+
+
+# Expected total number of cases change based on 𝑝
+import numpy as np
+pList=np.linspace(0,0.2,10)
+numCases=pd.Series()
+for p in pList:
+    numCases.loc[p]=np.mean([sum(simulateNewCases(60,p=p)) for i in range(1000)])
+numCases.plot(style='o-',title='Impact of the Probability of Transmission')    
+plt.xlabel('Probability of Transmission per Contact')
+plt.ylabel('Total number of cases in 60 days')
+plt.yscale('log')
+plt.show()
+
+# Visualization
+import pandas as pd
+import numpy as np
+results=pd.Series()
+results.loc['Lock Down after 10000 Cases']=\
+    np.mean([sum(simulateNewCases2(60,10000)) for i in range(1000)])
+results.loc['Lock Down after 1000 Cases']=\
+    np.mean([sum(simulateNewCases2(60,1000)) for i in range(1000)])
+results.plot(kind='barh',title='Number of Reported Cases within 60 Days')
+plt.xlim(left=0)
+plt.show()
